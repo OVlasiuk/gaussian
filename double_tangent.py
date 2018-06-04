@@ -12,7 +12,9 @@ from mpl_toolkits.mplot3d import Axes3D  # NOQA
 def get_options(parser):
     """ Define command line options."""
     parser.add_option(
-        "-C", dest="C", default=1.0,
+        "-C",
+        "--coeff",
+        dest="C", default=1.0,
         help="Coefficient in the exponent. Default: 1.0.")
     parser.add_option(
         "-d",
@@ -22,6 +24,7 @@ def get_options(parser):
         help="Dimension of the ambient space. Default: 3.")
     parser.add_option(
         "-N",
+        "--numpts",
         dest="N",
         default=800,
         help="Number of particles. Default: 800.")
@@ -112,7 +115,6 @@ if __name__ == "__main__":
             x0 = res.x
             prompt = input("Save the config (y/[n])?\n")
             if prompt == "y":
-                pplot(x0, dim)
                 fname = ('out/G_' + str(C) + '_dim_' + str(dim)+'_N_'
                          + str(N)+'.out')
                 if not os.path.isdir("out"):
@@ -120,3 +122,5 @@ if __name__ == "__main__":
                 else:
                     np.savetxt(fname, x0.reshape((-1, dim)), fmt='%.18f',
                                delimiter='\t')
+            else:
+                pplot(x0, dim)

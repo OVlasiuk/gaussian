@@ -1,0 +1,32 @@
+Single User Jupyter Server (See JupyterHub for multiuser)
+
+http://jupyter-notebook.readthedocs.io/en/stable/public_server.html
+https://coderwall.com/p/ohk6cg/remote-access-to-ipython-notebooks-via-ssh
+
+variables:
+
+local_user # e.g. 
+local_host # e.g.
+local_port_number # e.g. 8888
+remote_user #  e.g.
+remote_host # e.g.
+remote_port_number #e.g. 8888
+set_token
+
+
+
+#log into remote_host and start jupyter:
+	local_user@local_host$ ssh remote_user@remote_host
+
+#start jupyter server with port remote_port_number with token set to set_token:
+	remote_user@remote_host$ jupyter notebook --no-browser --port=remote_port_number --NotebookApp.token='set_token'
+
+
+#ssh tunnel to local machine; -N indicates no remote commands will be executed, -L lists the port forwarding configuration (remote port remote_port_number to local port local_port_number), -C turns on compression:
+
+	local_user@local_host$ ssh -N -C -L  localhost:local_port_number:localhost:remote_port_number remote_user@remote_host
+
+
+#In browser, go to localhost:local_port_number and enter token from the remote jupyter server.
+
+#To shut down: ctrl-c on local_host; ctrl-c ctrl-c on remote_host.

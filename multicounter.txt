@@ -1,0 +1,42 @@
+#Counts and outputs multiplicity of ipopt output(res.x)
+
+#import collections
+
+#X3count = res.x.reshape((-1,dim))
+#precision=7
+#X3counthash=map(str,np.round(X3count,precision))
+#counter=collections.Counter(X3counthash)
+
+#print(len(np.round(X3count,precision)),len(counter))
+#counter
+#
+##############################
+
+# multiplicity counter
+#needs collections
+
+
+#import collections
+
+#def multiplicity_array(flat_vector_array,precision,dim):
+#	vector_array = flat_vector_array.reshape((-1,dim))
+#	hash_vector_array = map(tuple,np.round(vector_array,precision))
+#	counter = collections.Counter(hash_vector_array)
+
+#	return counter
+
+
+import collections
+
+def multiplicity_array(flat_vector_array,precision,dim):
+    vector_array = flat_vector_array.reshape((-1,dim))
+    hash_vector_array = map(tuple,np.round(vector_array,precision))
+    counter = collections.Counter(hash_vector_array)
+    return counter.most_common()
+
+
+
+
+#use tuple type?
+
+#see http://blog.frank-mich.com/python-counters-on-objects/

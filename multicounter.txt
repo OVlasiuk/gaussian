@@ -1,0 +1,11 @@
+#Counts and outputs multiplicity of ipopt output(res.x)
+
+import collections
+
+X3count = res.x.reshape((-1,dim))
+precision=7
+X3counthash=map(str,np.round(X3count,precision))
+counter=collections.Counter(X3counthash)
+
+print(len(np.round(X3count,precision)),len(counter))
+counter

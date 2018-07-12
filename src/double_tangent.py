@@ -12,6 +12,11 @@ from mpl_toolkits.mplot3d import Axes3D  # NOQA
 def get_options(parser):
     """ Define command line options."""
     parser.add_option(
+        "-s",
+        "--save",
+        action="store_true", dest="save", default=False,
+        help="Whether to save the output in a file. Default: False.")
+    parser.add_option(
         "-C",
         "--coeff",
         dest="C", default=1.0,
@@ -44,8 +49,8 @@ def get_options(parser):
         is given. Default: 1.")
 
     options, args = parser.parse_args()
-    return float(options.C), int(options.dim), int(options.N),\
-        options.initpts, int(options.iterations)
+    return bool(options.save), float(options.C), int(options.dim),\
+        int(options.N), options.initpts, int(options.iterations)
 
 
 def pplot(x, dim):
@@ -90,7 +95,7 @@ def gaussian_scp_grad(X, C, dim):
 
 if __name__ == "__main__":
     parser = OptionParser()
-    C, dim, N, initpts, iterations = get_options(parser)
+    save, C, dim, N, initpts, iterations = get_options(parser)
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
@@ -113,8 +118,8 @@ if __name__ == "__main__":
         if res.fun < f0:
             f0 = res.fun
             x0 = res.x
-            prompt = input("Save the config (y/[n])?\n")
-            if prompt == "y":
+            # prompt = input("Save the config (y/[n])?\n")
+            if save:
                 fname = ('out/G_' + str(C) + '_dim_' + str(dim)+'_N_'
                          + str(N)+'.out')
                 if not os.path.isdir("out"):

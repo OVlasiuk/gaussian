@@ -1,0 +1,169 @@
+\documentclass[onecolumn,11pt,final]{amsart}
+%\documentclass[twocolumn,11pt,final]{amsart}
+\usepackage{amsmath}%
+\usepackage{amsfonts}%
+\usepackage{amssymb}%
+\usepackage{graphicx}
+\usepackage{pictexwd,dcpic}
+\usepackage{listings}
+\lstloadlanguages{Python}
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+\usepackage{wrapfig}
+\usepackage[margin=1in]{geometry}
+\usepackage{float}
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\usepackage[lastpage,user]{zref}
+\usepackage{fancyhdr}
+%\pagestyle{fancy}
+\cfoot{\raisebox{-1cm}{\thepage\ of \zpageref{LastPage}}}
+
+\newtheorem{definition}[equation]{Definition}
+\newtheorem{theorem}[equation]{Theorem}
+\newtheorem{conjecture}[equation]{Conjecture}
+\newtheorem{lemma}[equation]{Lemma}
+\newtheorem{conj}[equation]{Conjecture}
+\newtheorem{corollary}[equation]{Corollary}
+\newtheorem{remark}[equation]{Remark}
+\newtheorem{proposition}[equation]{Proposition}
+
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\K}{(K).}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\Conv}{Conv}
+\DeclareMathOperator{\Area}{Area}
+\newcommand{\rom}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\renewcommand{\arraystretch}{1.2}
+\makeatother
+
+
+\title{Lab Notebook Experimental Math 2018}
+\author{}
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\bibliographystyle{plain}
+
+\maketitle
+
+\section{Things to remember}
+\subsection{Math}
+\begin{itemize}
+\item Regarding Torquato's argument that the phase coexistence and separation of FCC and BCC in the double tangent regime: There are many ways to combine the FCC and BCC lattices even with a flat interface. For example, both can be constructed with cubical unit cells and sliced along pairs of rational coordinates.  These will be FCC and BCC in the bulk.
+\item Argument for phase separation:  Might be only way to even compute cross terms.  What would a super position of lattices even mean... it makes sense as empirical measures, but then the particles are distinguishable unless the normalization is exactly 1/2, and the lattices are shifted?
+\end{itemize}
+
+\subsection{Computation}
+
+\begin{itemize}
+\item Where should the kernel be defined?  for energy comps is it small enough to move to the GPU?
+ If the custom minimization packages don't play well: Euler's method.
+
+\item
+\end{itemize}
+
+
+\section{Math}
+
+\begin{itemize}
+
+\item We can compute the gaussian core potential by evaluating the relevant theta functions for the lattice: $\Theta_\Lambda(\alpha i/\pi)$ to arbitrary precision.
+\item Normalization by density.
+\item There is a crossover for FCC and BCC.
+\item Maxwells Double tangent construction suggests/implies that there is a poly-phase system that beats the minimizer of a pure FCC or BCC lattice.
+\item The regime is very small, the energies seem to basically coincide on a fairly large neighborhood of the crossover.
+\end{itemize}
+
+\subsection{Relevant Theorems}
+
+From Doug:  There does not appear to be a theorem that gives information about the asymptotic behavior?
+
+
+
+
+\section{Code Snippets}
+
+%\lstset{language=Python,tabsize=2}
+
+%\begin{lstlisting}
+%print ("Hello, World!")
+%\end{lstlisting}
+
+%\lstinputlisting[firstline=10,lastline=20]{Hello.py}
+
+%\lstinline!print ("Hello, World!")!
+
+
+
+
+
+\section{Experimental Results: Write Only}
+
+
+
+
+
+\section{References}
+
+
+
+
+
+\section{Clean Up Section}
+
+There does not exist any equilibrium....   
+
+Double Tangent:
+
+
+Estimate for the Gaussian Energy:  
+
+
+The Maxwell Double Tangent is a phenomenon that is poorly understood.  
+
+
+Gaussian
+
+500k points
+
+Numerical Computations:
+
+Error estimates:   
+
+
+Avold summation
+Riemann trick continuation of theta functions
+
+phase seperation?
+
+
+gaussian vs theta function
+
+
+Crossover for the FCC BCC Gaussian potential.   
+
+
+using theta functions
+
+
+
+Computations:  Python GPU
+
+C code that does n-body computation
+
+
+
+
+
+
+
+
+
+
+...
+
+
+\end{document}  
+

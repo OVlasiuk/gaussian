@@ -1,0 +1,14 @@
+#filename = input()
+#data = np.loadtxt(filename, delimiter="\t")
+
+
+
+slice_normal=[1.,1.,1.]
+offset=[.5,.5,.5]
+
+fcc_slice=np.reshape(list(filter(lambda x:np.inner(x-offset,slice_normal)>=0, latticefcc)),(-1,3))
+bcc_slice=np.reshape(list(filter(lambda x:np.inner(x-offset,slice_normal)<=0, latticebcc)),(-1,3))
+
+slice_combine=np.unique(np.concatenate((fcc_slice,bcc_slice),axis=0),axis=0)
+
+pplot(slice_combine, 3)

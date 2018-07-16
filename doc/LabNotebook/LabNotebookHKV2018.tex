@@ -52,6 +52,11 @@
 \subsection{Math}
 \begin{itemize}
 \item Regarding Torquato's argument that the phase coexistence and separation of FCC and BCC in the double tangent regime: There are many ways to combine the FCC and BCC lattices even with a flat interface. For example, both can be constructed with cubical unit cells and sliced along pairs of rational coordinates.  These will be FCC and BCC in the bulk.
+ \\-----(2018.7.16) Added a naive configuration generator in Mathematica.  Huge overhead, 90sec to generate ~500k points fcc/bcc in slices.
+\newline
+
+
+
 \item Argument for phase separation:  Might be only way to even compute cross terms.  What would a super position of lattices even mean... it makes sense as empirical measures, but then the particles are distinguishable unless the normalization is exactly 1/2, and the lattices are shifted?
 \end{itemize}
 
@@ -61,7 +66,10 @@
 \item Where should the kernel be defined?  for energy comps is it small enough to move to the GPU?
  If the custom minimization packages don't play well: Euler's method.
 
-\item
+\item Automatic Differentiation?  For complicated functions, this could be worthwhile
+\item Check exponentiation with PS expansion
+\item Combine gradient and energy kernels 
+\item Sum blocks on GPU
 \end{itemize}
 
 

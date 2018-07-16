@@ -1,5 +1,7 @@
 #Counts and outputs multiplicity of ipopt output(res.x)
 
+#This is terrible: Alex uses unique, much better.
+
 #import collections
 
 #X3count = res.x.reshape((-1,dim))

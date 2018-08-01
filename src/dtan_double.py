@@ -22,6 +22,11 @@ def get_options(parser):
         action="store_true", dest="save", default=False,
         help="Whether to save the output in a file. Default: False.")
     parser.add_option(
+        "-g",
+        "--graph",
+        action="store_true", dest="graph", default=False,
+        help="Whether to graph the output. Default: False.")
+    parser.add_option(
         "-C",
         "--coeff",
         dest="C", default=10.0,
@@ -55,7 +60,8 @@ def get_options(parser):
 
     options, args = parser.parse_args()
     # save, C, dim, N, initpts, iterations = get_options(parser)
-    return bool(options.save), float(options.C), int(options.dim),\
+    return bool(options.save), bool(options.graph), float(options.C),\
+        int(options.dim),\
         int(options.N), options.initpts, int(options.iterations)
 
 
@@ -155,7 +161,7 @@ def gaussian_grad(cnf, grad_dev, cnf_dev, c_dev, n):
 
 if __name__ == "__main__":
     parser = OptionParser()
-    save, C, dim, N, initpts, iterations = get_options(parser)
+    save, graph, C, dim, N, initpts, iterations = get_options(parser)
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
@@ -184,22 +190,24 @@ if __name__ == "__main__":
     bnds = tuple([(lb[i], ub[i]) for i in range(N*dim)])
 
     f0 = np.inf
-    # for I in range(iterations):
-
-    res = minimize_ipopt(
-        lambda X: gaussian(X, pt_dev, cnf_dev, c_dev, pt, n),
-        cnf, jac=lambda X: gaussian_grad(X, grad_dev, cnf_dev, c_dev, n),
-        bounds=bnds, options={'maxiter': 1000}
-    )
-    print("Status: %s\nEnergy: %10.4f\n" % (res.success, res.fun))
-    if res.fun < f0:
-        f0 = res.fun
-        x0 = res.x
+    for I in range(iterations):
+        if I > 0:
+            cnf = np.random.random(dim*N)
+            cnf_dev = to_gpu(cnf)
+        res = minimize_ipopt(
+            lambda X: gaussian(X, pt_dev, cnf_dev, c_dev, pt, n),
+            cnf, jac=lambda X: gaussian_grad(X, grad_dev, cnf_dev, c_dev, n),
+            bounds=bnds, options={'maxiter': 1000}
+        )
+        print("Status: %s\nEnergy: %10.4f\n" % (res.success, res.fun))
+        if res.fun < f0:
+            f0 = res.fun
+            x0 = res.x
     if save:
         if not os.path.isdir("../out"):
             os.mkdir("../out")
         fname = ('../out/G_' + str(C) + '_dim_'
                  + str(dim)+'_N_' + str(N)+'.out')
         np.savetxt(fname, x0.reshape((-1, dim)), fmt='%.18f', delimiter='\t')
-    else:
-        pplot(x0, dim)
+    if graph:
+        pplot(x0)

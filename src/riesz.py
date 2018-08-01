@@ -2,7 +2,7 @@
 from __future__ import division
 import os as os
 import numpy as np
-from math import pi, cos, sin
+from math import pi
 from optparse import OptionParser
 # from scipy.optimize import check_grad, approx_fprime
 # from scipy.linalg import norm
@@ -24,6 +24,11 @@ def get_options(parser):
         "--save",
         action="store_true", dest="save", default=False,
         help="Whether to save the output in a file. Default: False.")
+    parser.add_option(
+        "-g",
+        "--graph",
+        action="store_true", dest="graph", default=False,
+        help="Whether to graph the output. Default: False.")
     parser.add_option(
         "-p",
         "--power",
@@ -58,24 +63,28 @@ def get_options(parser):
 
     options, args = parser.parse_args()
     # save, C, dim, N, initpts, iterations = get_options(parser)
-    return bool(options.save), float(options.S), int(options.dim),\
-        int(options.N), options.initpts, int(options.iterations)
+    return bool(options.save), bool(options.graph), float(options.S),\
+        int(options.dim), int(options.N), options.initpts,\
+        int(options.iterations)
 
 
 def sph2cart(phitheta):
-    return np.array([cos(phitheta[0])*sin(phitheta[1]),
-                     sin(phitheta[0])*sin(phitheta[1]),
-                     cos(phitheta[1])])
+    return np.hstack((
+        (np.cos(phitheta[:, 0])*np.sin(phitheta[:, 1])).reshape((-1, 1)),
+        (np.sin(phitheta[:, 0])*np.sin(phitheta[:, 1])).reshape((-1, 1)),
+        (np.cos(phitheta[:, 1])).reshape((-1, 1))
+    ))
 
 
 def pplot(x):
     dim = 3
-    X3 = np.empty((len(x)//dim, dim))
-    for i in range(len(X3)):
-        X3[i, :] = sph2cart(x[i*2:(i+1)*2]).reshape((-1,))
+    X3 = np.empty((len(x)//(dim-1), dim))
+    X3 = sph2cart(x.reshape((-1, dim-1)))
+    # for i in range(len(X3)):
+    #     X3[i, :] = sph2cart(x[i*2:(i+1)*2]).reshape((-1,))
     r = 1
     coeff = .94
-    phi, theta = np.mgrid[0.0:np.pi:50j, 0.0:2.0*np.pi:50j]
+    phi, theta = np.mgrid[0.0:np.pi:100j, 0.0:2.0*np.pi:100j]
     x = r*np.sin(phi)*np.cos(theta)
     y = r*np.sin(phi)*np.sin(theta)
     z = r*np.cos(phi)
@@ -83,8 +92,11 @@ def pplot(x):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    ax.plot_wireframe(coeff*x, coeff*y, coeff*z,  rstride=4, cstride=4,
-                      color="blue", alpha=0.3, linewidth=1)
+    ax.plot_wireframe(coeff*x, coeff*y, coeff*z,  rstride=3, cstride=3,
+                      color="teal", alpha=0.4, linewidth=1)
+    # ax.plot_surface(coeff*x, coeff*y, coeff*z, rstride=1, cstride=1,
+    # linewidth=0, antialiased=False)
+    print(X3.shape)
     ax.scatter(X3[:, 0], X3[:, 1], X3[:, 2], marker='o', color='red')
     ax.set_xlim([-1, 1])
     ax.set_ylim([-1, 1])
@@ -200,7 +212,7 @@ def riesz_grad(cnf, grad_dev, grad3_dev, cnf_dev, s_dev, n):
 
 if __name__ == "__main__":
     parser = OptionParser()
-    save, S, dim, N, initpts, iterations = get_options(parser)
+    save, graph, S, dim, N, initpts, iterations = get_options(parser)
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
@@ -231,6 +243,7 @@ if __name__ == "__main__":
     lb = np.zeros_like(cnf)
     ub = 2*pi*np.ones_like(cnf)
     bnds = tuple([(lb[i], ub[i]) for i in range(len(cnf))])
+
     # print(check_grad(lambda X: riesz(X, pt_dev, cnf_dev, s_dev, pt, n),
     #                  lambda X: riesz_grad(X, grad_dev, grad3_dev, cnf_dev,
     #                                       s_dev, n), cnf  ))
@@ -247,22 +260,27 @@ if __name__ == "__main__":
 
     # print(riesz(cnf, pt_dev, cnf_dev, s_dev, pt, n))
     # print(riesz_grad(cnf, grad_dev, grad3_dev, cnf_dev, s_dev, n)[-1])
+
     for I in range(iterations):
+        if I > 0:
+            cnf = 2*pi*np.random.random((dim-1)*N)
+            cnf_dev = to_gpu(cnf)
         res = minimize_ipopt(
             lambda X: riesz(X, pt_dev, cnf_dev, s_dev, pt, n), cnf,
             jac=lambda X: riesz_grad(X, grad_dev, grad3_dev,
                                      cnf_dev, s_dev, n),
             bounds=bnds, options={'maxiter': 1000}
         )
-        print("Status: %s\nEnergy: %10.4f\n" % (res.success, res.fun))
         if res.fun < f0:
+            print("Status: %s\nEnergy: %10.4f\n" % (res.success, res.fun))
             f0 = res.fun
             x0 = res.x
     if save:
         if not os.path.isdir("out"):
             os.mkdir("out")
-        fname = ('out/G_' + str(s) + '_dim_'
+        fname = ('out/G_' + str(S) + '_dim_'
                  + str(dim)+'_N_' + str(N)+'.out')
-        np.savetxt(fname, x0.reshape((-1, dim)), fmt='%.18f', delimiter='\t')
-    else:
+        np.savetxt(fname, sph2cart(x0.reshape((-1, dim-1))),
+                   fmt='%.18f', delimiter='\t')
+    if graph:
         pplot(x0)
